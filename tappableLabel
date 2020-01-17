@@ -1,5 +1,30 @@
 import UIKit
 
+class ViewController: UIViewController {
+    @IBOutlet weak var label: TappableLabel!
+    let image1Attachment = NSTextAttachment()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+        let fullString = NSMutableAttributedString(string: "Start of text ansbnbjsans amndmnamdbns msnbfmbsmfn sfmsf  ")
+        image1Attachment.image = UIImage(named: "dots")
+
+        let image1String = NSAttributedString(attachment: image1Attachment)
+
+        fullString.append(image1String)
+        label.attributedText = fullString
+        
+        label.makeTappable()
+        label.onImageTapped = { [weak self] in
+            self?.label.attributedText =  NSMutableAttributedString(string: " dbasjf sdasdfknaksdf kjasdfkjnasdkjf askdfkjhsadkfjhksad akshdkfnsakdjnf aksjdgfksdjg kashkjdghkjsd askjdhgksjdgk kasdfgkhsakdf askdhfkhsdakf")
+        }
+        
+        
+    }
+
+}
+
 class TappableLabel: UILabel {
 
     var onImageTapped: (() -> Void)?
