@@ -1,0 +1,49 @@
+import UIKit
+
+class TappableLabel: UILabel {
+
+    var onImageTapped: (() -> Void)?
+
+    func makeTappable() {
+        let tapGesture = UITapGestureRecognizer()
+        tapGesture.addTarget(self, action: #selector(labelTapped))
+        tapGesture.isEnabled = true
+        self.addGestureRecognizer(tapGesture)
+        self.isUserInteractionEnabled = true
+    }
+
+    @objc func labelTapped(gesture: UITapGestureRecognizer) {
+
+        // only detect taps in attributed text
+        guard let attributedText = attributedText, gesture.state == .ended, let onImageTapped = onImageTapped else {
+            return
+        }
+
+        // Configure NSTextContainer
+        let textContainer = NSTextContainer(size: bounds.size)
+        textContainer.lineFragmentPadding = 0.0
+        textContainer.lineBreakMode = lineBreakMode
+        textContainer.maximumNumberOfLines = numberOfLines
+
+        // Configure NSLayoutManager and add the text container
+        let layoutManager = NSLayoutManager()
+        layoutManager.addTextContainer(textContainer)
+
+        // Configure NSTextStorage and apply the layout manager
+        let textStorage = NSTextStorage(attributedString: attributedText)
+        textStorage.addAttribute(NSAttributedString.Key.font, value: font, range: NSMakeRange(0, attributedText.length))
+        textStorage.addLayoutManager(layoutManager)
+
+        // get the tapped character location
+        let locationOfTouchInLabel = gesture.location(in: gesture.view)
+        
+        let glyphIndex: Int = layoutManager.glyphIndex(for: locationOfTouchInLabel, in: textContainer, fractionOfDistanceThroughGlyph: nil)
+        let characterIndex: Int = layoutManager.characterIndexForGlyph(at: glyphIndex)
+
+        if (attributedText.attribute(.attachment, at: characterIndex, effectiveRange: nil) as? NSTextAttachment) != nil  {
+                   print("image detected")
+            onImageTapped()
+        }
+
+    }
+}
